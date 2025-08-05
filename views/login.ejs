@@ -3,24 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel = "stylesheet" href="/styles.css"/>
+    <title>Login - Our Wonderful App</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <header>
-        <h2> <a href= "/">Our Wonderful App</a></h2>
-        <nav>
-            <a href = '#'>Log In</a>
-        </nav>
+        <div class="header-content">
+            <h2><a href="/">Our Wonderful App</a></h2>
+            <nav>
+                <a href="/login" class="active">Log In</a>
+                <a href="/register">Sign Up</a>
+            </nav>
+        </div>
     </header>
-    <main>
-        <h3>Login Page!!!</h3>
-        <p>I trying to create a new Login page using Express.
-            This is the backend Server acticvity tracking.
-        </p>
-    </main>
-    <footer>
-        <small>This belongs to me</small>
+
+    <div class="container">
+        <h1>Welcome Back</h1>
+        
+        <% if (error && error.length > 0) { %>
+            <div class="error-message">
+                <ul>
+                    <% error.forEach(function(error) { %>
+                        <li><%= error %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+
+        <form action="/login" method="post" novalidate>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    required
+                    autocomplete="username"
+                    value="<%= locals.username || '' %>"
+                    aria-describedby="usernameHelp"
+                >
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label for="password">Password</label>
+                    <a href="/forgot-password" style="font-size: 0.85rem;">Forgot password?</a>
+                </div>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    autocomplete="current-password"
+                    minlength="8"
+                    maxlength="20"
+                >
+            </div>
+
+            <div class="form-group" style="margin-top: 2rem;">
+                <button type="submit" class="btn">Log In</button>
+            </div>
+        </form>
+
+        <div class="form-footer">
+            Don't have an account? <a href="/register">Sign up</a>
+        </div>
+    </div>
+
+    <footer style="text-align: center; padding: 1.5rem; color: #666; font-size: 0.9rem;">
+        <small>&copy; <%= new Date().getFullYear() %> Our Wonderful App. All rights reserved.</small>
     </footer>
 </body>
 </html>
