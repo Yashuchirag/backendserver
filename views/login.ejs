@@ -1,22 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Our Wonderful App</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
+<%- include("includes/head") %>
 <body>
-    <header>
-        <div class="header-content">
-            <h2><a href="/">Our Wonderful App</a></h2>
-            <nav>
-                <a href="/login" class="active">Log In</a>
-                <a href="/register">Sign Up</a>
-            </nav>
-        </div>
-    </header>
-
+    <%- include("includes/header") %>
     <div class="container">
         <h1>Welcome Back</h1>
         
@@ -37,12 +23,10 @@
         </form>
 
         <div class="form-footer">
-            Don't have an account? <a href="/register">Sign up</a>
+            Don't have an account? <a href="/">Sign up</a>
         </div>
     </div>
 
-    <footer style="text-align: center; padding: 1.5rem; color: #666; font-size: 0.9rem;">
-        <small>&copy; <%= new Date().getFullYear() %> Our Wonderful App. All rights reserved.</small>
-    </footer>
+    <%- include("includes/footer") %>
 </body>
 </html>
