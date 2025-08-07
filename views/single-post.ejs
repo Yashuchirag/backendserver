@@ -5,19 +5,11 @@
     <%- include("includes/header") %>
     <main>
         <h1><%= post.title %></h1>
-        <p><%= post.content %></p>
-        <p>By <%= post.author %></p>
-
         <article>
-            <h2>Comments</h2>
-            <ul>
-                <% post.comments.forEach(function(comment) { %>
-                    <li><%= comment %></li>
-                <% }) %>
-            </ul>
+            <small>Posted by <%= post.author %> on <%= new Date(post.createdDate).getMonth()+1 %> <%= new Date(post.createdDate).getFullYear() %></small>
+            <p><%= post.content %></p>
         </article>
     </main>
-
     <%- include("includes/footer") %>
 </body>
 </html>

@@ -5,8 +5,10 @@
     <%- include("includes/header") %>
     <main>
         <h2>Welcome to your dashboard</h2>
-        <p>The contents of this age is just a demo of dashboard</p>
-        
+        <p>The contents of this page is just a demo of dashboard</p>
+        <% posts.forEach(post => { %> 
+                <li><a href="/post/<%= post.id %>"><%= post.title %></a></li>
+        <% }) %>        
     </main>
     <%- include("includes/footer") %>
 </body>

@@ -53,6 +53,13 @@ app.use((req, res, next) => {
     next()
 })
 
+function posts(req, res, next) {
+    const postsStatement = db.prepare(`SELECT * FROM posts WHERE userId = ?`)
+    const posts = postsStatement.all(req.user.userid)
+    res.render("dashboard", { posts })
+}
+
+
 function mustBeLoggedIn(req, res, next) {
     if (!req.user) {
         return res.redirect("/")
@@ -62,7 +69,9 @@ function mustBeLoggedIn(req, res, next) {
 
 app.get('/', (req, res) =>{
     if (req.user) {
-        return res.render("dashboard")
+        const postsStatement = db.prepare(`SELECT * FROM posts WHERE userId = ?`)
+        const posts = postsStatement.all(req.user.userid)
+        return res.render("dashboard", { posts })
     }
     res.render("homepage")
 })
@@ -97,7 +106,7 @@ function sharedPostValidation(data) {
 }
 
 app.get("/post/:id", (req, res) => {
-    const statement = db.prepare(`SELECT * FROM posts WHERE id = ?`)
+    const statement = db.prepare(`SELECT post.*, users.username FROM posts INNER JOIN users ON posts.userId = users.id WHERE posts.id = ?`)
     const post = statement.get(req.params.id);    
     if (!post) {
         return res.redirect("/")
