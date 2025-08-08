@@ -9,11 +9,13 @@
             <small>Posted by <%= post.author %> on <%= new Date(post.createdDate).getMonth()+1 %> <%= new Date(post.createdDate).getFullYear() %></small>
             <p><%- filterUserHTML(post.content) %></p>
         </article>
-        <a href="/edit-post/<%= post.id %>">Edit Post</a>
-
-        <form style="display: inline;" action="/delete-post/<%= post.id %>" method="post">
-            <button type="submit">Delete Post</button>
-        </form>
+        <div class="post-actions">
+            <a href="/edit-post/<%= post.id %>" class="action-btn">Edit Post</a>
+          
+            <form action="/delete-post/<%= post.id %>" method="post" onsubmit="return confirm('Are you sure you want to delete this post?');">
+              <button type="submit" class="action-btn">Delete Post</button>
+            </form>
+        </div>
     </main>
     <%- include("includes/footer") %>
 </body>

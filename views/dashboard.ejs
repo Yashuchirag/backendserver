@@ -12,13 +12,15 @@
     <% } else { %>
         <main>
             <h4>Hello <%= user.username %>, here are your posts</h4>
-            <% posts.forEach(post => { %> 
-                <article>
-                    <small>Posted by <%= post.author %> on <%= new Date(post.createdDate).getMonth()+1 %> <%= new Date(post.createdDate).getFullYear() %></small>
-                <a href="/post/<%= post.id %>"><p><%= post.title %></p></a>
-            </article>
-        <% }) %>        
-    </main>
+            <ul>
+              <% posts.forEach(post => { %>
+                <li>
+                  <a href="/post/<%= post.id %>"><%= post.title %></a> —
+                  <small>by <%= post.author %>, <%= new Date(post.createdDate).getMonth() + 1 %>/<%= new Date(post.createdDate).getFullYear() %></small>
+                </li>
+              <% }) %>
+            </ul>
+          </main>
     <% } %>
     <%- include("includes/footer") %>
 </body>
