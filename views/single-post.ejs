@@ -7,8 +7,13 @@
         <h1><%= post.title %></h1>
         <article>
             <small>Posted by <%= post.author %> on <%= new Date(post.createdDate).getMonth()+1 %> <%= new Date(post.createdDate).getFullYear() %></small>
-            <p><%= post.content %></p>
+            <p><%- filterUserHTML(post.content) %></p>
         </article>
+        <a href="/edit-post/<%= post.id %>">Edit Post</a>
+
+        <form style="display: inline;" action="/delete-post/<%= post.id %>" method="post">
+            <button type="submit">Delete Post</button>
+        </form>
     </main>
     <%- include("includes/footer") %>
 </body>

@@ -1,6 +1,7 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const sanitizeHtml = require('sanitize-html')
+const marked = require('marked')
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt')
@@ -39,6 +40,12 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 app.use((req, res, next) => {
+    res.locals.filterUserHTML = function(content){
+        return sanitizeHtml(marked.parse(content), {
+            allowedTags: ["p", "br", "b", "i", "u", "a", "img", "ul", "li", "strong", "bold", "i", "em", "h1", "h2", "h3", "h4", "h5", "h6"], 
+            allowedAttributes: {} 
+        })
+    }
     res.locals.error = []
 
     // try to catch incoming cookie
@@ -53,12 +60,6 @@ app.use((req, res, next) => {
     next()
 })
 
-function posts(req, res, next) {
-    const postsStatement = db.prepare(`SELECT * FROM posts WHERE userId = ?`)
-    const posts = postsStatement.all(req.user.userid)
-    res.render("dashboard", { posts })
-}
-
 
 function mustBeLoggedIn(req, res, next) {
     if (!req.user) {
@@ -69,7 +70,7 @@ function mustBeLoggedIn(req, res, next) {
 
 app.get('/', (req, res) =>{
     if (req.user) {
-        const postsStatement = db.prepare(`SELECT * FROM posts WHERE userId = ?`)
+        const postsStatement = db.prepare(`SELECT * FROM posts WHERE userId = ? ORDER BY createdDate DESC`)
         const posts = postsStatement.all(req.user.userid)
         return res.render("dashboard", { posts })
     }
@@ -105,13 +106,43 @@ function sharedPostValidation(data) {
     return errors;
 }
 
+app.get("/edit-post/:id", mustBeLoggedIn, (req, res) => {
+    const statement = db.prepare(`SELECT * FROM posts WHERE id = ?`)
+    const post = statement.get(req.params.id)
+    if (!post) {
+        return res.redirect("/")
+    }
+
+    const isAuthor = post.author === req.user.username
+    res.render("edit-post", { post, isAuthor })
+})
+
+app.post("/edit-post/:id", mustBeLoggedIn, (req, res) => {
+    const errors = sharedPostValidation(req.body);
+    if (errors.length > 0) {
+        return res.render("edit-post", { error: errors, title: req.body.title, content: req.body.content, author: req.user.username });
+    }    
+
+    // update the post in the database
+    const updatePost = db.prepare(`UPDATE posts SET title = ?, content = ? WHERE id = ?`)
+    updatePost.run(req.body.title, req.body.content, req.params.id)
+
+    res.redirect("/post/" + req.params.id)
+})
+
 app.get("/post/:id", (req, res) => {
-    const statement = db.prepare(`SELECT post.*, users.username FROM posts INNER JOIN users ON posts.userId = users.id WHERE posts.id = ?`)
+    const statement = db.prepare(`SELECT posts.*, users.username FROM posts INNER JOIN users ON posts.userId = users.id WHERE posts.id = ?`)
     const post = statement.get(req.params.id);    
     if (!post) {
         return res.redirect("/")
     }
     res.render("single-post", { post })
+})
+
+app.post("/delete-post/:id", mustBeLoggedIn, (req, res) => {
+    const statement = db.prepare(`DELETE FROM posts WHERE id = ?`)
+    statement.run(req.params.id)
+    res.redirect("/")
 })
 
 app.post("/create-post", mustBeLoggedIn, (req, res) => {
